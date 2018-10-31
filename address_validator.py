@@ -1,10 +1,12 @@
+import re
+
 catch_unit_types = ['apt', 'suite', 'ste', 'unit']
 
-class address:
+
+class Address:
     def __init__(self, original_address):
         self.original_address = original_address
-        self.unit_number = None
-        self.address_num = None
+        self.parse_address_num()
 
     @property
     def original_address(self):
@@ -19,7 +21,7 @@ class address:
         return self._address_num
 
     @address_num.setter
-    def address_num(self,address_num):
+    def address_num(self, address_num):
         self._address_num = address_num
 
     @property
@@ -46,13 +48,11 @@ class address:
     def unit_number(self, unit_number):
         self._unit_number = unit_number
 
-
     @property
     def unit_type(self):
         return self
 
     def parse_address_num(self):
-        # TODO pop matched unit numbers from numbers_at_position
         # also split at '-' unless it's preceded by 'Bin', 'De' or 'Mid'
         address_parts = []
         for p in self.original_address.split(' '):
@@ -63,7 +63,6 @@ class address:
                 address_parts.append(p)
 
         numbers_at_position = []
-        print(address_parts)
         for part in address_parts:
             # find any numbers
             if part.isdigit():
@@ -78,30 +77,25 @@ class address:
             if (address_parts[position - 1].lower() in catch_unit_types and position > 0) \
                     or (address_parts[position + 1].lower() in catch_unit_types and position < len(address_parts) -1):
                 self.unit_number = address_parts[position]
+                numbers_at_position.pop(numbers_at_position.index(position))
 
-        # if you only have one number, its the address number
-        if len(numbers_at_position) == 1:
-            self.address_num = address_parts[numbers_at_position[0]]
-
-        print(self.address_num)
         # if you have two adjacent numbers, the first one is unit
         if len(numbers_at_position) == 2 and numbers_at_position[1] - numbers_at_position[0] == 1:
             self.address_num = address_parts[numbers_at_position[1]]
             self.unit_number = address_parts[numbers_at_position[0]]
+            numbers_at_position.pop(0)
+            return self
+
+        # if you only have one number, its the address number
+        if len(numbers_at_position) == 1:
+            # Units that are letters mixed in with the address number like 100A
+            letter_number = re.split('(\d+)', address_parts[numbers_at_position[0]])
+            if len(letter_number) > 1:
+                self.address_num = letter_number[1]
+                self.unit_number = letter_number[0]
+            else:
+                self.address_num = address_parts[numbers_at_position[0]]
 
         # TODO catch mixed numbers with letters
 
-
         return self
-
-
-def main():
-    test_data = ['411 Westmount Ave apt 2', '2-411 Westmount Ave', '411A Westmount Ave', 'Suite 2 411 Westmount Ave',
-                 '411 Apt 2 Westmount Ave', '100 Bin-scarth Avenue 2nd apt']
-    for test in test_data:
-        hocd pyme = address(test)
-        home.parse_address_num()
-
-
-if __name__ == '__main__':
-    main()
