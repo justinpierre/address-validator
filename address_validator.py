@@ -89,13 +89,12 @@ class Address:
         # if you only have one number, its the address number
         if len(numbers_at_position) == 1:
             # Units that are letters mixed in with the address number like 100A
-            letter_number = re.split('(\d+)', address_parts[numbers_at_position[0]])
+            letter_number = list(filter(None,re.split('(\d+)', address_parts[numbers_at_position[0]])))
             if len(letter_number) > 1:
-                self.address_num = letter_number[1]
-                self.unit_number = letter_number[0]
+                self.address_num = letter_number[0]
+                self.unit_number = letter_number[1]
             else:
                 self.address_num = address_parts[numbers_at_position[0]]
 
-        # TODO catch mixed numbers with letters
 
         return self
