@@ -1,7 +1,11 @@
 import re
 
 catch_unit_types = ['apt', 'suite', 'ste', 'unit']
-street_types
+street_types = {'St': ['Street', 'St.'],
+                'Ave': ['Avenue', 'Ave.'],
+                'Rd': ['Road', 'Rd.'],
+                'Blvd': ['Boulevard', 'Blvd.']}
+
 
 class Address:
     def __init__(self, original_address):
@@ -17,7 +21,8 @@ class Address:
         self.address_num, self.unit_number, pop_numbers = self.parse_address_num(address_parts)
         for pn in pop_numbers:
             address_parts.pop(pn)
-        print(address_parts)
+
+        self.street_type_suffix, pop_numbers = self.parse_street_type(address_parts)
 
     @property
     def original_address(self):
@@ -49,7 +54,11 @@ class Address:
 
     @property
     def street_type_suffix(self):
-        return self
+        return self._street_type_suffix
+
+    @street_type_suffix.setter
+    def street_type_suffix(self, street_type_suffix):
+        self._street_type_suffix = street_type_suffix
 
     @property
     def unit_number(self):
@@ -104,3 +113,12 @@ class Address:
             topop.append(numbers_at_position[0])
 
         return address_num, unit_number, topop
+
+    def parse_street_type(self, address_parts):
+        for ap in address_parts:
+            for k, l in street_types.items():
+                if ap == k:
+                    return k, address_parts.index(ap)
+                for v in l:
+                    if ap == v:
+                        return k, address_parts.index(ap)
