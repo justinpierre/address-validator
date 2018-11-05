@@ -4,7 +4,36 @@ catch_unit_types = ['apt', 'suite', 'ste', 'unit']
 street_types = {'St': ['Street', 'St.'],
                 'Ave': ['Avenue', 'Ave.'],
                 'Rd': ['Road', 'Rd.'],
-                'Blvd': ['Boulevard', 'Blvd.']}
+                'Blvd': ['Boulevard', 'Blvd.'],
+                'Lane': ['Ln'],
+                'Way': ['Wy'],
+                'Ter': ['Terrace'],
+                'Pk': ['Park'],
+                'Wds': ['Woods'],
+                'Pl': ['Place'],
+                'Gdns': ['Gardens'],
+                'Grv': ['Grove'],
+                'Wood': ['Wd'],
+                'Lwn': ['Lawn'],
+                'Cres': ['Crescent'],
+                'Crcl': ['Circle'],
+                'Trl': ['Trail'],
+                'Cs': ['Close'],
+                'View': ['Vw'],
+                'Grn': ['Green'],
+                'Mews': ['Mws'],
+                'Pkwy': ['Parkway'],
+                'Walk': ['Wlk'],
+                'Crct': ['Circuit'],
+                'Line': ['Line'],
+                'Hill': ['Hill.'],
+                'Ptwy': ['Pathway'],
+                'Crt': ['Court'],
+                'Gt': ['Gate'],
+                'Path': ['Path'],
+                'Hts': ['Heights'],
+                'Sq': ['Square']
+                }
 
 
 class Address:
