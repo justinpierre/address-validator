@@ -49,7 +49,7 @@ class Address:
                 for x in p.split('-'):
                     address_parts.append(x.strip())
             else:
-                address_parts.append(p.strip())
+                address_parts.append(p.strip().replace(',', ''))
         self.address_num, self.unit_number, pop_numbers = self.parse_address_num(address_parts)
         for pn in pop_numbers:
             address_parts.pop(pn)
@@ -61,7 +61,7 @@ class Address:
 
         self.unit_type, pop_numbers = self.parse_unit_type(address_parts)
 
-        if pop_numbers:
+        if pop_numbers is not None:
             address_parts.pop(pop_numbers)
 
         self.name_body = self.parse_name_body(address_parts)
@@ -162,27 +162,28 @@ class Address:
             else:
                 address_num = address_parts[numbers_at_position[0]]
             topop.append(numbers_at_position[0])
-
+        topop.sort(reverse=True)
         return address_num, unit_number, topop
 
     def parse_street_type(self, address_parts):
+        resp = None, None
         for ap in address_parts:
             for k, l in street_types.items():
-                if ap == k:
-                    return k, address_parts.index(ap)
+                if ap.lower() == k.lower():
+                    resp = k, address_parts.index(ap)
                 for v in l:
-                    if ap == v:
-                        return k, address_parts.index(ap)
+                    if ap.lower() == v.lower():
+                        resp = k, address_parts.index(ap)
 
-        return None, None
+        return resp
 
     def parse_unit_type(self, address_parts):
         for ap in address_parts:
             for k, l in unit_types.items():
-                if ap == k:
+                if ap.lower() == k.lower():
                     return k, address_parts.index(ap)
                 for v in l:
-                    if ap == v:
+                    if ap.lower() == v.lower():
                         return k, address_parts.index(ap)
         return None, None
 
@@ -196,5 +197,4 @@ class Address:
             if score < match[1]:
                 match = [n, score]
 
-        print(match)
         return match[0]
