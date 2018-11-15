@@ -3,7 +3,9 @@ from stringdist import levenshtein
 from data.street_name_body import names
 
 unit_types = {'Apt': ['apt', 'apartment'], 'Ste': ['suite'], 'Unit': ['unit']}
+street_dir = {'W': ['West', 'W.'], 'E': ['East', 'E.'], 'S': ['South', 'S.'], 'N': ['North', 'N.']}
 catch_unit_types = ['apt', 'suite', 'ste', 'unit', 'apartment']
+muns = ['toronto', 'etobicoke', 'scarborough', 'york', 'east york']
 street_types = {'St': ['Street', 'St.'],
                 'Ave': ['Avenue', 'Ave.'],
                 'Rd': ['Road', 'Rd.'],
@@ -50,9 +52,16 @@ class Address:
                     address_parts.append(x.strip())
             else:
                 address_parts.append(p.strip().replace(',', ''))
+        if address_parts[len(address_parts)-1].lower() in muns:
+            address_parts.pop(len(address_parts)-1)
+
         self.address_num, self.unit_number, pop_numbers = self.parse_address_num(address_parts)
         for pn in pop_numbers:
             address_parts.pop(pn)
+
+        self.dir_suffix, pop_numbers = self.parse_dir_suffix(address_parts)
+        if pop_numbers:
+            address_parts.pop(pop_numbers)
 
         self.street_type_suffix, pop_numbers = self.parse_street_type(address_parts)
 
@@ -61,7 +70,7 @@ class Address:
 
         self.unit_type, pop_numbers = self.parse_unit_type(address_parts)
 
-        if pop_numbers is not None:
+        if pop_numbers:
             address_parts.pop(pop_numbers)
 
         self.name_body = self.parse_name_body(address_parts)
@@ -96,7 +105,11 @@ class Address:
 
     @property
     def dir_suffix(self):
-        return self
+        return self._dir_suffix
+
+    @dir_suffix.setter
+    def dir_suffix(self, dir_suffix):
+        self._dir_suffix = dir_suffix
 
     @property
     def street_type_suffix(self):
@@ -187,13 +200,27 @@ class Address:
                         return k, address_parts.index(ap)
         return None, None
 
+
+    def parse_dir_suffix(self, address_parts):
+        for ap in address_parts:
+            for k, l in street_dir.items():
+                if ap.lower() == k.lower():
+                    return k, address_parts.index(ap)
+                for v in l:
+                    if ap.lower() == v.lower():
+                        return k, address_parts.index(ap)
+        return None, None
+
     def parse_name_body(self, address_parts):
+        # stick together the remaining parts
+        s = ' '
+        name = s.join(address_parts)
         match = [None, 10]
-        if address_parts[0] in names:
-            return address_parts[0]
+        if name in names:
+            return name
 
         for n in names:
-            score = levenshtein(address_parts[0], n)
+            score = levenshtein(name, n)
             if score < match[1]:
                 match = [n, score]
 
