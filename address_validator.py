@@ -1,6 +1,7 @@
 import re
 from stringdist import levenshtein
 from data.street_name_body import names
+import requests
 
 unit_types = {'Apt': ['apt', 'apartment'], 'Ste': ['suite'], 'Unit': ['unit']}
 street_dir = {'W': ['West', 'W.'], 'E': ['East', 'E.'], 'S': ['South', 'S.'], 'N': ['North', 'N.']}
@@ -213,6 +214,7 @@ class Address:
 
     def parse_name_body(self, address_parts):
         # stick together the remaining parts
+        # TODO return best matches under a value
         s = ' '
         name = s.join(address_parts)
         match = [None, 10]
@@ -225,3 +227,17 @@ class Address:
                 match = [n, score]
 
         return match[0]
+
+    def geocode(self):
+        query_url = 'http://gis.toronto.ca/arcgis/rest/services/primary/cot_geospatial_mtm/MapServer/2/query'
+
+        print(self.address_num)
+        params = {"where": "ADDRESS_NUMBER = '%s' AND LINEAR_NAME = '%s'" % (address.address_num, address.name_body),
+                  "outFields": "*",
+                  "returnGeometry": "true",
+                  "returnIdsOnly": "false",
+                  "returnCountOnly": "false",
+                  "f": "pjson"
+                  }
+        resp = requests.get(query_url, params)
+        return resp.json()['features'][0]['geometry']
