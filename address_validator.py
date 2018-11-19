@@ -53,8 +53,12 @@ class Address:
                     address_parts.append(x.strip())
             else:
                 address_parts.append(p.strip().replace(',', ''))
+        address_parts = list(filter(None, address_parts))
         if address_parts[len(address_parts)-1].lower() in muns:
+            self.municipality = address_parts[len(address_parts)-1]
             address_parts.pop(len(address_parts)-1)
+        else:
+            self.municipality = None
 
         self.address_num, self.unit_number, pop_numbers = self.parse_address_num(address_parts)
         for pn in pop_numbers:
@@ -75,6 +79,8 @@ class Address:
             address_parts.pop(pop_numbers)
 
         self.name_body = self.parse_name_body(address_parts)
+
+        self.geometry = self.geocode()
 
     @property
     def original_address(self):
@@ -136,6 +142,21 @@ class Address:
     def unit_type(self, unit_type):
         self._unit_type = unit_type
 
+    @property
+    def municipality(self):
+        return self._municipality
+
+    @municipality.setter
+    def municipality(self, municipality):
+        self._municipality = municipality
+
+    @property
+    def geometry(self):
+        return self._geometry
+
+    @geometry.setter
+    def geometry(self, geometry):
+        self._geometry = geometry
 
     def parse_address_num(self, address_parts):
         numbers_at_position = []
@@ -164,6 +185,7 @@ class Address:
             unit_number = address_parts[numbers_at_position[0]]
             topop.extend([numbers_at_position[0], numbers_at_position[1]])
             numbers_at_position.pop(0)
+            topop.sort(reverse=True)
             return address_num, unit_number, topop
 
         # if you only have one number, its the address number
@@ -230,9 +252,19 @@ class Address:
 
     def geocode(self):
         query_url = 'http://gis.toronto.ca/arcgis/rest/services/primary/cot_geospatial_mtm/MapServer/2/query'
+        where = ''
+        fields = {'ADDRESS_NUMBER': self.address_num,
+                  'LINEAR_NAME': self.name_body,
+                  'LINEAR_NAME_TYPE': self.street_type_suffix,
+                  'LINEAR_NAME_DIR': self.dir_suffix,
+                  'MUNICIPALITY_NAME': self.municipality}
+        for f, m in fields.items():
+            if m:
+                if where != '':
+                    where += ' AND '
+                where += "%s = '%s'" % (f, m)
 
-        print(self.address_num)
-        params = {"where": "ADDRESS_NUMBER = '%s' AND LINEAR_NAME = '%s'" % (address.address_num, address.name_body),
+        params = {"where": where,
                   "outFields": "*",
                   "returnGeometry": "true",
                   "returnIdsOnly": "false",
@@ -240,4 +272,7 @@ class Address:
                   "f": "pjson"
                   }
         resp = requests.get(query_url, params)
-        return resp.json()['features'][0]['geometry']
+        geoms = []
+        for f in resp.json()['features']:
+            geoms.append(f['geometry'])
+        return geoms
