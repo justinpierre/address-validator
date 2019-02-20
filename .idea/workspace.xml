@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4a01f729-a1de-47b5-a482-ce753207fd44" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+    <list default="true" id="4a01f729-a1de-47b5-a482-ce753207fd44" name="Default Changelist" comment="Merge branch 'master' of https://github.com/justinpierre/address-validator&#10;&#10;# Conflicts:&#10;#&#9;.idea/address_validator.iml&#10;#&#9;.idea/misc.xml&#10;#&#9;.idea/workspace.xml">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/address_validator.py" beforeDir="false" afterPath="$PROJECT_DIR$/address_validator.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_geocoder.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_geocoder.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -162,7 +158,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-8" />
     <option name="y" value="-8" />
     <option name="width" value="1936" />
