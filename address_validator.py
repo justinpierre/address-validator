@@ -56,7 +56,7 @@ class Address:
         address_parts = list(filter(None, address_parts))
         if address_parts[len(address_parts)-1].lower() in muns:
             self.municipality = address_parts[len(address_parts)-1]
-            address_p   arts.pop(len(address_parts)-1)
+            address_parts.pop(len(address_parts)-1)
         else:
             self.municipality = None
 
