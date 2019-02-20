@@ -6,7 +6,7 @@ import requests
 unit_types = {'Apt': ['apt', 'apartment'], 'Ste': ['suite'], 'Unit': ['unit']}
 street_dir = {'W': ['West', 'W.'], 'E': ['East', 'E.'], 'S': ['South', 'S.'], 'N': ['North', 'N.']}
 catch_unit_types = ['apt', 'suite', 'ste', 'unit', 'apartment']
-muns = ['toronto', 'etobicoke', 'scarborough', 'york', 'east york']
+muns = ['toronto', 'etobicoke', 'scarborough', 'york', 'east york', 'north york']
 street_types = {'St': ['Street', 'St.'],
                 'Ave': ['Avenue', 'Ave.'],
                 'Rd': ['Road', 'Rd.'],
@@ -56,7 +56,7 @@ class Address:
         address_parts = list(filter(None, address_parts))
         if address_parts[len(address_parts)-1].lower() in muns:
             self.municipality = address_parts[len(address_parts)-1]
-            address_parts.pop(len(address_parts)-1)
+            address_p   arts.pop(len(address_parts)-1)
         else:
             self.municipality = None
 
